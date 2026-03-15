@@ -113,8 +113,4 @@ export interface InjectionResult {
   error?: string;
 }
 
-export interface McpServerEntry {
-  command: string;
-  args: string[];
-  env: Record<string, string>;
-}
+export type McpServerEntry = Record<string, unknown>;

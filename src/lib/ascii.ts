@@ -65,7 +65,7 @@ export function showSuccessBox(agentCount: number): void {
     `   ${pc.green('▶')}  Archer is ready`,
     '',
     `   injected into ${agentCount} agent${agentCount !== 1 ? 's' : ''}`,
-    '   connected to your Supabase project',
+    '   connected to your backend',
     '',
     '   open your AI agent and say:',
     `   ${pc.dim('"watch my users table for new signups"')}`,

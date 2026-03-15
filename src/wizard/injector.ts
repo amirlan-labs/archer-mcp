@@ -6,16 +6,32 @@ import { logSuccess, logError, logAction } from '../lib/ascii.js';
 import { getConfigKey } from './detector.js';
 import type { AgentInfo, InjectionResult, McpServerEntry } from '../types/index.js';
 
-// ─── Archer MCP Entry ───────────────────────────────────────
+// ─── Archer MCP Entry (agent-aware) ─────────────────────────
 
-function buildArcherEntry(supabaseUrl: string, serviceRoleKey: string): McpServerEntry {
+function buildArcherEntry(
+  agentName: string,
+  supabaseUrl: string,
+  serviceRoleKey: string,
+): McpServerEntry {
+  const envVars = {
+    SUPABASE_URL: supabaseUrl,
+    SUPABASE_SERVICE_ROLE_KEY: serviceRoleKey,
+  };
+
+  // opencode uses { type, command[], environment }
+  if (agentName === 'opencode') {
+    return {
+      type: 'local',
+      command: ['npx', '-y', 'archer-wizard@latest', '--mcp'],
+      environment: envVars,
+    };
+  }
+
+  // cursor, claude-code, windsurf, antigravity use { command, args, env }
   return {
     command: 'npx',
     args: ['-y', 'archer-wizard@latest', '--mcp'],
-    env: {
-      SUPABASE_URL: supabaseUrl,
-      SUPABASE_SERVICE_ROLE_KEY: serviceRoleKey,
-    },
+    env: envVars,
   };
 }
 
@@ -51,7 +67,7 @@ function injectIntoAgent(
   try {
     const configKey = getConfigKey(agent.name);
     const config = readConfig(agent.configPath);
-    const archerEntry = buildArcherEntry(supabaseUrl, serviceRoleKey);
+    const archerEntry = buildArcherEntry(agent.name, supabaseUrl, serviceRoleKey);
 
     // Ensure the config key object exists
     if (!config[configKey] || typeof config[configKey] !== 'object') {

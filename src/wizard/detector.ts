@@ -34,9 +34,9 @@ const AGENTS: AgentPathConfig[] = [
   {
     name: 'opencode',
     paths: {
-      darwin: path.join(os.homedir(), '.config', 'opencode', 'config.json'),
-      linux: path.join(os.homedir(), '.config', 'opencode', 'config.json'),
-      win32: path.join(process.env['APPDATA'] ?? os.homedir(), 'opencode', 'config.json'),
+      darwin: path.join(os.homedir(), '.config', 'opencode', 'opencode.json'),
+      linux: path.join(os.homedir(), '.config', 'opencode', 'opencode.json'),
+      win32: path.join(process.env['APPDATA'] ?? os.homedir(), 'opencode', 'opencode.json'),
     },
   },
   {

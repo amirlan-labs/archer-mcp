@@ -9,53 +9,75 @@ import type { AgentInfo } from '../types/index.js';
 const RULE_CONTENT = `
 # Archer — Event Intelligence for AI Agents
 
-Archer is the event intelligence layer for AI agents. It connects to your data sources (Supabase, GitHub, Stripe, Linear, etc.), watches for conditions you define in plain english, and fires your AI agent the moment those conditions are true, with full context already loaded.
+Archer is the universal event intelligence layer for AI agents. It watches your data sources in real time, detects changes the moment they happen, and delivers full context to your webhook — so your agent can react instantly, without polling.
 
-## Available Tool: archer.watch
+## Available MCP Tools
 
-You can watch real-time events from data sources using the \`archer.watch\` MCP tool.
+### archer_watch
+Create a persistent real-time watch on a data source. Watches survive agent session restarts.
 
-### When to Use Archer
+**Parameters:**
+- **table** *(required)* — name of the table or resource to watch
+- **event** — type of change: \`INSERT\`, \`UPDATE\`, \`DELETE\`, or \`*\` (all). Default: \`*\`
+- **filter** — optional filter expression, e.g. \`"status=eq.active"\` or \`"amount=gt.1000"\`
+- **webhookUrl** — URL to receive a POST with full event payload when a match fires
 
-Use Archer whenever you need to:
-- Monitor database changes (inserts, updates, deletes)
-- Watch for new user signups
-- React to events in external services
-- Automate responses to data changes
-- Set up real-time notifications
+### archer_unwatch
+Remove an active watch by its ID. Stops listening and cleans up.
 
-### Parameters
+**Parameters:**
+- **watchId** *(required)* — the watch ID returned by \`archer_watch\`
 
-- **source**: data source (currently \`"supabase"\`)
-- **event**: one of \`"auth.signup"\`, \`"table.insert"\`, \`"table.update"\`, \`"table.delete"\`
-- **table**: the table name (required for table events)
-- **condition**: optional filter like \`"email ends with @gmail.com"\`
-- **webhookUrl**: URL to receive POST notifications when events match
+### archer_watches
+List all active watches — their IDs, tables, events, filters, and webhook URLs.
 
-### Examples
+## When to Use Archer
 
-1. Watch for new user signups:
+Use Archer any time the user wants to:
+- **Monitor data changes** — new rows, updates, deletions in any table
+- **React to events** — trigger automations when conditions are met
+- **Set up alerts** — notify on signups, new orders, status changes, threshold breaches
+- **Build event-driven workflows** — chain watches with webhooks for real-time pipelines
+- **Track activity** — audit logs, user actions, system events
+
+## Examples
+
+1. Watch for new rows in a table:
    \`\`\`
-   archer.watch({ source: "supabase", event: "auth.signup", webhookUrl: "https://hooks.example.com/signups" })
-   \`\`\`
-
-2. Watch for inserts to the orders table:
-   \`\`\`
-   archer.watch({ source: "supabase", event: "table.insert", table: "orders", webhookUrl: "https://hooks.example.com/orders" })
-   \`\`\`
-
-3. Watch with a condition:
-   \`\`\`
-   archer.watch({ source: "supabase", event: "table.insert", table: "users", condition: "email ends with @company.com", webhookUrl: "https://hooks.example.com/vip" })
+   archer_watch({ table: "users", event: "INSERT", webhookUrl: "https://hooks.example.com/new-users" })
    \`\`\`
 
-### Best Practices
+2. Watch for updates with a filter:
+   \`\`\`
+   archer_watch({ table: "orders", event: "UPDATE", filter: "status=eq.shipped", webhookUrl: "https://hooks.example.com/shipped" })
+   \`\`\`
 
-- Use descriptive webhook URLs that indicate the action to take
-- Add conditions to filter events and reduce noise
-- Combine with your existing workflows for maximum impact
+3. Watch all changes on a table:
+   \`\`\`
+   archer_watch({ table: "payments", webhookUrl: "https://hooks.example.com/payments" })
+   \`\`\`
 
-When the user asks to "watch", "monitor", "notify", or "fire" something, use Archer.
+4. List active watches:
+   \`\`\`
+   archer_watches()
+   \`\`\`
+
+5. Stop a watch:
+   \`\`\`
+   archer_unwatch({ watchId: "abc-123" })
+   \`\`\`
+
+## Best Practices
+
+- Add filters to reduce noise — only fire on events that matter
+- Use descriptive webhook URLs that map to specific actions
+- Chain multiple watches for complex event-driven workflows
+- Use \`archer_watches\` to inspect and manage active watchers
+- Clean up watches you no longer need with \`archer_unwatch\`
+
+## Trigger Words
+
+When the user says **"watch"**, **"monitor"**, **"notify me"**, **"alert me"**, **"track"**, **"listen for"**, or **"fire when"** — use Archer.
 `.trim();
 
 // ─── Archer Block Markers ───────────────────────────────────
