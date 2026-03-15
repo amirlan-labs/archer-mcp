@@ -11,7 +11,7 @@ import type { AgentInfo, InjectionResult, McpServerEntry } from '../types/index.
 function buildArcherEntry(supabaseUrl: string, serviceRoleKey: string): McpServerEntry {
   return {
     command: 'npx',
-    args: ['-y', 'archer-wizard@latest', '--mcp'],
+    args: ['-y', 'archer@latest', '--mcp'],
     env: {
       SUPABASE_URL: supabaseUrl,
       SUPABASE_SERVICE_ROLE_KEY: serviceRoleKey,
