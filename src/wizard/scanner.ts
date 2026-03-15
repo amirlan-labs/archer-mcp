@@ -28,15 +28,12 @@ function searchInFiles(cwd: string, patterns: RegExp[]): Map<string, string> {
               patterns.forEach(pattern => {
                 const match = line.match(pattern);
                 if (match) {
-                  // Extract value (handle key=value or key: value formats)
-                  const valueMatch = line.match(/=\s*['"]?([^'"\s]+)['"]?|:\s*['"]?([^'"\s]+)['"]?/);
-                  if (valueMatch) {
-                    const value = valueMatch[1] || valueMatch[2];
-                    if (value) {
-                      const key = match[1] || match[0];
-                      if (!results.has(key)) {
-                        results.set(key, value);
-                      }
+                  // Extract value from regex capture groups
+                  const value = match[1] || match[2] || match[3] || match[4] || match[5] || match[6];
+                  if (value) {
+                    const key = match[0].split('=')[0].trim();
+                    if (!results.has(key)) {
+                      results.set(key, value);
                     }
                   }
                 }
@@ -211,12 +208,12 @@ export async function scanProject(cwd: string): Promise<ScanResult> {
 
   // Search in codebase for Supabase keys
   const codebasePatterns = [
-    /SUPABASE_URL\s*=\s*['"]([^'"]+)['"]/i,
-    /NEXT_PUBLIC_SUPABASE_URL\s*=\s*['"]([^'"]+)['"]/i,
-    /VITE_SUPABASE_URL\s*=\s*['"]([^'"]+)['"]/i,
-    /SUPABASE_SERVICE_ROLE_KEY\s*=\s*['"]([^'"]+)['"]/i,
-    /SUPABASE_SERVICE_KEY\s*=\s*['"]([^'"]+)['"]/i,
-    /SUPABASE_ANON_KEY\s*=\s*['"]([^'"]+)['"]/i,
+    /SUPABASE_URL\s*=\s*(?:['"]([^'"]+)['"]|([^\s;]+))/i,
+    /NEXT_PUBLIC_SUPABASE_URL\s*=\s*(?:['"]([^'"]+)['"]|([^\s;]+))/i,
+    /VITE_SUPABASE_URL\s*=\s*(?:['"]([^'"]+)['"]|([^\s;]+))/i,
+    /SUPABASE_SERVICE_ROLE_KEY\s*=\s*(?:['"]([^'"]+)['"]|([^\s;]+))/i,
+    /SUPABASE_SERVICE_KEY\s*=\s*(?:['"]([^'"]+)['"]|([^\s;]+))/i,
+    /SUPABASE_ANON_KEY\s*=\s*(?:['"]([^'"]+)['"]|([^\s;]+))/i,
   ];
   
   const codebaseResults = searchInFiles(cwd, codebasePatterns);
