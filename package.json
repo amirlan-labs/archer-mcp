@@ -1,9 +1,10 @@
 {
-  "name": "archer-wizard",
+  "name": "archer",
   "version": "0.1.0",
   "description": "event intelligence layer for AI agents",
   "type": "module",
   "bin": {
+    "archer": "dist/index.js",
     "archer-wizard": "dist/index.js"
   },
   "scripts": {

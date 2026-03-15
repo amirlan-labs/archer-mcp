@@ -36,12 +36,24 @@ export function showAsciiArt(): void {
 
   // Pixel art bow and arrow (emerald green)
   const bowArrow = [
-    `        ${emerald('│')}`,
-    `      ${emerald('╱')}   ${emerald('╲')}`,
-    `    ${emerald('(')}     ${emerald(')')}`,
-    `      ${emerald('╲')}   ${emerald('╱')}`,
-    `        ${emerald('│')}`,
-    `      ${emerald('──')} ${emerald('►')}`,
+    `        ${emerald('╭───╮')}`,
+    `       ${emerald('╱')}   ${emerald('╲')}`,
+    `      ${emerald('╱')}     ${emerald('╲')}`,
+    `     ${emerald('╱')}       ${emerald('╲')}`,
+    `    ${emerald('╱')}         ${emerald('╲')}`,
+    `   ${emerald('╱')}           ${emerald('╲')}`,
+    `  ${emerald('╱')}             ${emerald('╲')}`,
+    ` ${emerald('╱')}               ${emerald('╲')}`,
+    `${emerald('╱')}                 ${emerald('╲')}`,
+    ` ${emerald('╲')}               ${emerald('╱')}`,
+    `  ${emerald('╲')}             ${emerald('╱')}`,
+    `   ${emerald('╲')}           ${emerald('╱')}`,
+    `    ${emerald('╲')}         ${emerald('╱')}`,
+    `     ${emerald('╲')}       ${emerald('╱')}`,
+    `      ${emerald('╲')}     ${emerald('╱')}`,
+    `       ${emerald('╲')}   ${emerald('╱')}`,
+    `        ${emerald('╰───╯')}`,
+    `          ${emerald('───►')}`,
   ];
   
   console.log();
