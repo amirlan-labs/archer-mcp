@@ -1,6 +1,6 @@
 {
   "name": "archer-wizard",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "event intelligence layer for AI agents",
   "type": "module",
   "bin": {

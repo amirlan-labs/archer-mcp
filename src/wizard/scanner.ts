@@ -2,7 +2,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import * as clack from '@clack/prompts';
 import { z } from 'zod';
-import { logSuccess, logError, maskCredential } from '../lib/ascii.js';
 import type { ScanResult, Framework } from '../types/index.js';
 
 // Helper to search for keys in files
@@ -236,28 +235,6 @@ export async function scanProject(cwd: string): Promise<ScanResult> {
 
   const { framework, hasSupabaseInstalled } = detectFramework(cwd);
 
-  // Log found credentials
-  if (supabaseUrl) {
-    logSuccess(`SUPABASE_URL = ${maskCredential(supabaseUrl)}`);
-  } else {
-    logError('missing SUPABASE_URL');
-  }
-
-  if (serviceRoleKey) {
-    logSuccess(`SUPABASE_SERVICE_ROLE_KEY = ${maskCredential(serviceRoleKey)}`);
-  } else {
-    logError('missing SUPABASE_SERVICE_ROLE_KEY');
-  }
-
-  if (anonKey) {
-    logSuccess(`SUPABASE_ANON_KEY = ${maskCredential(anonKey)}`);
-  }
-
-  if (foundInFile) {
-    logSuccess(`found credentials in ${foundInFile}`);
-  } else if (codebaseResults.size > 0) {
-    logSuccess(`found credentials in codebase`);
-  }
 
   return {
     supabaseUrl,
