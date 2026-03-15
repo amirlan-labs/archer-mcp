@@ -1,6 +1,6 @@
 {
   "name": "archer-wizard",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "event intelligence layer for AI agents",
   "type": "module",
   "bin": {
@@ -11,6 +11,7 @@
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "dev:mcp": "tsx src/index.ts --mcp",
+    "dev:daemon": "tsx src/index.ts --daemon",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {

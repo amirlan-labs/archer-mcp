@@ -11,54 +11,19 @@ const emeraldDim = colors.dim;
 
 export function showAsciiArt(): void {
   const lines = [
-    '█████╗ ██████╗  ██████╗██╗  ██╗███████╗██████╗ ',
-    '██╔══██╗██╔══██╗██╔════╝██║  ██║██╔════╝██╔══██╗',
-    '███████║██████╔╝██║     ███████║█████╗  ██████╔╝',
-    '██╔══██║██╔══██╗██║     ██╔══██║██╔══╝  ██╔══██╗',
-    '██║  ██║██║  ██║╚██████╗██║  ██║███████╗██║  ██║',
-    '╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝',
+    '',
+    '   █████╗ ██████╗  ██████╗██╗  ██╗███████╗██████╗ ',
+    '  ██╔══██╗██╔══██╗██╔════╝██║  ██║██╔════╝██╔══██╗',
+    '  ███████║██████╔╝██║     ███████║█████╗  ██████╔╝',
+    '  ██╔══██║██╔══██╗██║     ██╔══██║██╔══╝  ██╔══██╗',
+    '  ██║  ██║██║  ██║╚██████╗██║  ██║███████╗██║  ██║',
+    '  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝',
+    '',
   ];
-
-  // Column boundaries for coloring:
-  // A: cols 0-5, R: 6-13, C: 14-21, H: 22-29, E: 30-37, R: 38-45
-  // ARCH = white, ER = emerald green
-  const archEnd = 30; // columns 0-29 are A R C H
-  const erEnd = 46;   // columns 30-45 are E R
 
   for (const line of lines) {
-    const archPart = line.slice(0, archEnd);
-    const erPart = line.slice(archEnd, erEnd);
-    const rest = line.slice(erEnd);
-    process.stdout.write(colors.white(archPart) + emerald(erPart) + rest + '\n');
+    console.log(emerald(line));
   }
-
-  // Pixel art bow and arrow (emerald green)
-  const bowArrow = [
-    `        ${emerald('╭───╮')}`,
-    `       ${emerald('╱')}   ${emerald('╲')}`,
-    `      ${emerald('╱')}     ${emerald('╲')}`,
-    `     ${emerald('╱')}       ${emerald('╲')}`,
-    `    ${emerald('╱')}         ${emerald('╲')}`,
-    `   ${emerald('╱')}           ${emerald('╲')}`,
-    `  ${emerald('╱')}             ${emerald('╲')}`,
-    ` ${emerald('╱')}               ${emerald('╲')}`,
-    `${emerald('╱')}                 ${emerald('╲')}`,
-    ` ${emerald('╲')}               ${emerald('╱')}`,
-    `  ${emerald('╲')}             ${emerald('╱')}`,
-    `   ${emerald('╲')}           ${emerald('╱')}`,
-    `    ${emerald('╲')}         ${emerald('╱')}`,
-    `     ${emerald('╲')}       ${emerald('╱')}`,
-    `      ${emerald('╲')}     ${emerald('╱')}`,
-    `       ${emerald('╲')}   ${emerald('╱')}`,
-    `        ${emerald('╰───╯')}`,
-    `          ${emerald('───►')}`,
-  ];
-  
-  console.log();
-  bowArrow.forEach(line => console.log(line));
-  console.log();
-  console.log(emeraldDim('  v0.1.0  ·  event intelligence for AI agents'));
-  console.log();
 }
 
 // ─── Status Logger ──────────────────────────────────────────
