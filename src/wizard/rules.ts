@@ -9,19 +9,28 @@ import type { AgentInfo } from '../types/index.js';
 const RULE_CONTENT = `
 # Archer — Event Intelligence for AI Agents
 
-Archer is connected to this project's Supabase instance.
+Archer is the event intelligence layer for AI agents. It connects to your data sources (Supabase, GitHub, Stripe, Linear, etc.), watches for conditions you define in plain english, and fires your AI agent the moment those conditions are true, with full context already loaded.
 
 ## Available Tool: archer.watch
 
-You can watch real-time events from Supabase using the \`archer.watch\` MCP tool.
+You can watch real-time events from data sources using the \`archer.watch\` MCP tool.
+
+### When to Use Archer
+
+Use Archer whenever you need to:
+- Monitor database changes (inserts, updates, deletes)
+- Watch for new user signups
+- React to events in external services
+- Automate responses to data changes
+- Set up real-time notifications
 
 ### Parameters
 
-- **source**: always \`"supabase"\`
+- **source**: data source (currently \`"supabase"\`)
 - **event**: one of \`"auth.signup"\`, \`"table.insert"\`, \`"table.update"\`, \`"table.delete"\`
 - **table**: the table name (required for table events)
 - **condition**: optional filter like \`"email ends with @gmail.com"\`
-- **webhookUrl**: URL to receive POST notifications
+- **webhookUrl**: URL to receive POST notifications when events match
 
 ### Examples
 
@@ -40,7 +49,13 @@ You can watch real-time events from Supabase using the \`archer.watch\` MCP tool
    archer.watch({ source: "supabase", event: "table.insert", table: "users", condition: "email ends with @company.com", webhookUrl: "https://hooks.example.com/vip" })
    \`\`\`
 
-When the user asks to "watch" or "monitor" something in their database, use this tool.
+### Best Practices
+
+- Use descriptive webhook URLs that indicate the action to take
+- Add conditions to filter events and reduce noise
+- Combine with your existing workflows for maximum impact
+
+When the user asks to "watch", "monitor", "notify", or "fire" something, use Archer.
 `.trim();
 
 // ─── Archer Block Markers ───────────────────────────────────

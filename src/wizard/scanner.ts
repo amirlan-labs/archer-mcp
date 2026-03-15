@@ -5,6 +5,57 @@ import { z } from 'zod';
 import { logSuccess, logError, maskCredential } from '../lib/ascii.js';
 import type { ScanResult, Framework } from '../types/index.js';
 
+// Helper to search for keys in files
+function searchInFiles(cwd: string, patterns: RegExp[]): Map<string, string> {
+  const results = new Map<string, string>();
+  
+  function scanDir(dir: string) {
+    try {
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        
+        // Skip node_modules, .git, and other hidden directories
+        if (entry.isDirectory() && !entry.name.startsWith('.') && entry.name !== 'node_modules' && entry.name !== '.git') {
+          scanDir(fullPath);
+        } else if (entry.isFile()) {
+          try {
+            const content = fs.readFileSync(fullPath, 'utf-8');
+            const lines = content.split('\n');
+            
+            lines.forEach((line, lineNum) => {
+              patterns.forEach(pattern => {
+                const match = line.match(pattern);
+                if (match) {
+                  // Extract value (handle key=value or key: value formats)
+                  const valueMatch = line.match(/=\s*['"]?([^'"\s]+)['"]?|:\s*['"]?([^'"\s]+)['"]?/);
+                  if (valueMatch) {
+                    const value = valueMatch[1] || valueMatch[2];
+                    if (value) {
+                      const key = match[1] || match[0];
+                      if (!results.has(key)) {
+                        results.set(key, value);
+                      }
+                    }
+                  }
+                }
+              });
+            });
+          } catch {
+            // Skip unreadable files
+          }
+        }
+      }
+    } catch {
+      // Skip unreadable directories
+    }
+  }
+  
+  scanDir(cwd);
+  return results;
+}
+
 // ─── Env File Priority ──────────────────────────────────────
 
 const ENV_FILES = [
@@ -158,6 +209,30 @@ export async function scanProject(cwd: string): Promise<ScanResult> {
     }
   }
 
+  // Search in codebase for Supabase keys
+  const codebasePatterns = [
+    /SUPABASE_URL\s*=\s*['"]([^'"]+)['"]/i,
+    /NEXT_PUBLIC_SUPABASE_URL\s*=\s*['"]([^'"]+)['"]/i,
+    /VITE_SUPABASE_URL\s*=\s*['"]([^'"]+)['"]/i,
+    /SUPABASE_SERVICE_ROLE_KEY\s*=\s*['"]([^'"]+)['"]/i,
+    /SUPABASE_SERVICE_KEY\s*=\s*['"]([^'"]+)['"]/i,
+    /SUPABASE_ANON_KEY\s*=\s*['"]([^'"]+)['"]/i,
+  ];
+  
+  const codebaseResults = searchInFiles(cwd, codebasePatterns);
+  
+  // Merge codebase results (env files take precedence)
+  for (const [key, value] of codebaseResults) {
+    const lowerKey = key.toLowerCase();
+    if (lowerKey.includes('url') && !mergedEnv.has('SUPABASE_URL')) {
+      mergedEnv.set('SUPABASE_URL', value);
+    } else if (lowerKey.includes('service') && !mergedEnv.has('SUPABASE_SERVICE_ROLE_KEY')) {
+      mergedEnv.set('SUPABASE_SERVICE_ROLE_KEY', value);
+    } else if (lowerKey.includes('anon') && !mergedEnv.has('SUPABASE_ANON_KEY')) {
+      mergedEnv.set('SUPABASE_ANON_KEY', value);
+    }
+  }
+
   const supabaseUrl = findByAliases(mergedEnv, SUPABASE_URL_ALIASES);
   const serviceRoleKey = findByAliases(mergedEnv, SERVICE_ROLE_KEY_ALIASES);
   const anonKey = findByAliases(mergedEnv, ANON_KEY_ALIASES);
@@ -183,6 +258,8 @@ export async function scanProject(cwd: string): Promise<ScanResult> {
 
   if (foundInFile) {
     logSuccess(`found credentials in ${foundInFile}`);
+  } else if (codebaseResults.size > 0) {
+    logSuccess(`found credentials in codebase`);
   }
 
   return {

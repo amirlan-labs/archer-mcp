@@ -190,7 +190,7 @@ export function executeWatch(rawInput: unknown): WatchResult {
 export const WATCH_TOOL_SCHEMA = {
   name: 'archer_watch',
   description:
-    'Watch real-time events from Supabase. Monitors auth signups, table inserts, updates, and deletes. Fires a webhook when conditions are met.',
+    'Archer is the event intelligence layer for AI agents. Watch real-time events from data sources. Monitors auth signups, table inserts, updates, and deletes. Fires a webhook when conditions are met. Agents stop waiting for you to talk to them and start acting on their own when the world moves.',
   inputSchema: {
     type: 'object' as const,
     properties: {

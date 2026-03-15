@@ -1,5 +1,14 @@
 import pc from 'picocolors';
 
+// Emerald green color using ANSI true color (RGB 46, 204, 113)
+const EMERALD = '\x1b[38;2;46;204;113m';
+const EMERALD_DIM = '\x1b[38;2;39;174;96m';
+const RESET = '\x1b[0m';
+
+// Helper to apply emerald color
+const emerald = (text: string) => EMERALD + text + RESET;
+const emeraldDim = (text: string) => EMERALD_DIM + text + RESET;
+
 // ─── ASCII Art ──────────────────────────────────────────────
 
 export function showAsciiArt(): void {
@@ -14,7 +23,7 @@ export function showAsciiArt(): void {
 
   // Column boundaries for coloring:
   // A: cols 0-5, R: 6-13, C: 14-21, H: 22-29, E: 30-37, R: 38-45
-  // ARCH = white, ER = green
+  // ARCH = white, ER = emerald green
   const archEnd = 30; // columns 0-29 are A R C H
   const erEnd = 46;   // columns 30-45 are E R
 
@@ -22,11 +31,23 @@ export function showAsciiArt(): void {
     const archPart = line.slice(0, archEnd);
     const erPart = line.slice(archEnd, erEnd);
     const rest = line.slice(erEnd);
-    process.stdout.write(pc.white(archPart) + pc.green(erPart) + rest + '\n');
+    process.stdout.write(pc.white(archPart) + emerald(erPart) + rest + '\n');
   }
 
+  // Pixel art bow and arrow (emerald green)
+  const bowArrow = [
+    `        ${emerald('│')}`,
+    `      ${emerald('╱')}   ${emerald('╲')}`,
+    `    ${emerald('(')}     ${emerald(')')}`,
+    `      ${emerald('╲')}   ${emerald('╱')}`,
+    `        ${emerald('│')}`,
+    `      ${emerald('──')} ${emerald('►')}`,
+  ];
+  
   console.log();
-  console.log(pc.dim('  v0.1.0  ·  event intelligence for AI agents'));
+  bowArrow.forEach(line => console.log(line));
+  console.log();
+  console.log(emeraldDim('  v0.1.0  ·  event intelligence for AI agents'));
   console.log();
 }
 
