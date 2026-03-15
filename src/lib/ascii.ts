@@ -29,7 +29,7 @@ export function showAsciiArt(): void {
     const archPart = line.slice(0, archEnd);
     const erPart = line.slice(archEnd, erEnd);
     const rest = line.slice(erEnd);
-    process.stdout.write(pc.white(archPart) + emerald(erPart) + rest + '\n');
+    process.stdout.write(colors.white(archPart) + emerald(erPart) + rest + '\n');
   }
 
   // Pixel art bow and arrow (emerald green)
