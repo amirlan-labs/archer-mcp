@@ -106,9 +106,10 @@ export function detectAgents(): AgentInfo[] {
     const configExists = fileExists(configPath);
     const dirExists = parentDirExists(configPath);
 
-    // Agent is "installed" if its parent directory exists
-    // (the config file might not exist yet)
-    if (dirExists) {
+    // Agent is "installed" if:
+    // 1. The config file exists, OR
+    // 2. The parent directory exists (for first-time setup)
+    if (configExists || dirExists) {
       detected.push({
         name: agent.name,
         installed: true,
@@ -133,19 +134,23 @@ export function getConfigKey(agentName: string): 'mcpServers' | 'mcp' {
 
 // ─── Get Rules Path For Agent ───────────────────────────────
 
-export function getRulesPath(agentName: string, cwd: string): string {
+export function getRulesPath(agentName: string): string {
+  const homeDir = os.homedir();
+  
   switch (agentName) {
     case 'cursor':
-      return path.join(cwd, '.cursor', 'rules', 'archer.mdc');
+      return path.join(homeDir, '.cursor', 'rules', 'archer.mdc');
     case 'claude-code':
-      return path.join(cwd, 'CLAUDE.md');
+      // For Claude Code, we'll use the project's CLAUDE.md
+      // but we need to get the current working directory
+      return path.join(process.cwd(), 'CLAUDE.md');
     case 'opencode':
-      return path.join(cwd, '.opencode', 'rules.md');
+      return path.join(homeDir, '.config', 'opencode', 'rules.md');
     case 'antigravity':
-      return path.join(cwd, '.antigravity', 'rules.md');
+      return path.join(homeDir, '.config', 'antigravity', 'rules.md');
     case 'windsurf':
-      return path.join(cwd, '.windsurf', 'rules.md');
+      return path.join(homeDir, '.codeium', 'windsurf', 'rules.md');
     default:
-      return path.join(cwd, '.archer', 'rules.md');
+      return path.join(homeDir, '.archer', 'rules.md');
   }
 }

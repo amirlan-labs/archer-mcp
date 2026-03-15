@@ -58,7 +58,7 @@ export async function runWizard(): Promise<void> {
   // ─ Step 13: Inject rules ─
   if (successfulAgents.length > 0) {
     logAction('writing agent rules...');
-    injectRules(successfulAgents, cwd);
+    injectRules(successfulAgents);
     console.log();
   }
 

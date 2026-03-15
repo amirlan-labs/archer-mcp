@@ -1,13 +1,11 @@
 import pc from 'picocolors';
 
-// Emerald green color using ANSI true color (RGB 46, 204, 113)
-const EMERALD = '\x1b[38;2;46;204;113m';
-const EMERALD_DIM = '\x1b[38;2;39;174;96m';
-const RESET = '\x1b[0m';
+// Force colors for better visibility
+const colors = pc.createColors(true);
 
-// Helper to apply emerald color
-const emerald = (text: string) => EMERALD + text + RESET;
-const emeraldDim = (text: string) => EMERALD_DIM + text + RESET;
+// Use picocolors green (more compatible than true color)
+const emerald = colors.green;
+const emeraldDim = colors.dim;
 
 // ─── ASCII Art ──────────────────────────────────────────────
 

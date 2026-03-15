@@ -89,9 +89,9 @@ function insertContent(existingContent: string, newBlock: string): string {
 
 // ─── Write Rules to Agent ───────────────────────────────────
 
-function writeRulesForAgent(agent: AgentInfo, cwd: string): boolean {
+function writeRulesForAgent(agent: AgentInfo): boolean {
   try {
-    const rulesPath = getRulesPath(agent.name, cwd);
+    const rulesPath = getRulesPath(agent.name);
     const dir = path.dirname(rulesPath);
     const wrappedContent = wrapInBlock(RULE_CONTENT);
 
@@ -120,8 +120,8 @@ function writeRulesForAgent(agent: AgentInfo, cwd: string): boolean {
 
 // ─── Main Rules Injector ────────────────────────────────────
 
-export function injectRules(agents: AgentInfo[], cwd: string): void {
+export function injectRules(agents: AgentInfo[]): void {
   for (const agent of agents) {
-    writeRulesForAgent(agent, cwd);
+    writeRulesForAgent(agent);
   }
 }
