@@ -1,0 +1,28 @@
+{
+  "name": "archer-wizard",
+  "version": "0.1.0",
+  "description": "event intelligence layer for AI agents",
+  "type": "module",
+  "bin": {
+    "archer-wizard": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "dev:mcp": "tsx src/index.ts --mcp",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "@supabase/supabase-js": "^2.99.1",
+    "@clack/prompts": "^1.1.0",
+    "picocolors": "^1.1.1",
+    "dotenv": "^17.3.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "tsx": "^4.21.0",
+    "@types/node": "^25.5.0"
+  }
+}
