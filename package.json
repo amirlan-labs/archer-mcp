@@ -1,6 +1,6 @@
 {
-  "name": "archer",
-  "version": "0.1.1",
+  "name": "archer-mcp",
+  "version": "0.1.0",
   "description": "event intelligence layer for AI agents",
   "type": "module",
   "bin": {

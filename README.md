@@ -206,7 +206,7 @@ You never paste credentials manually. Archer finds them.
 ```
 developer's machine                    data source
 ───────────────────                    ───────────
-npx archer-wizard@latest               realtime channel
+npx archer-mcp@latest                  realtime channel
    ↓                                          ↓
 wizard scans .env          Archer subscribes to changes 24/7
    ↓                                          ↓
@@ -233,7 +233,7 @@ Everything runs locally on your machine using your own credentials. The architec
 
 ```bash
 # Install from npm
-npx archer-wizard@latest
+npx archer-mcp@latest
 
 # Or from source:
 git clone https://github.com/amirlan-labs/archer-mcp
