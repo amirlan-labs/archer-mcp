@@ -206,13 +206,29 @@ You never paste credentials manually. Archer finds them.
 ```
 developer's machine                    data source
 ───────────────────                    ───────────
-npx archer@latest                      realtime channel
-  ↓                                          ↓
+npx archer-wizard@latest               realtime channel
+   ↓                                          ↓
 wizard scans .env          Archer subscribes to changes 24/7
-  ↓                                          ↓
+   ↓                                          ↓
 injects into agents        condition matched → webhook fires
-  ↓                                          ↓
+   ↓                                          ↓
 agent calls archer.watch() AI agent wakes up with full context
+```
+
+## publishing to npm
+
+```bash
+# 1. Build the project
+npm run build
+
+# 2. Login to npm
+npm login
+
+# 3. Publish
+npm publish
+
+# 4. Test the published package
+npx archer-wizard@latest
 ```
 
 No AI at runtime. Once a condition is defined it is pure logic — fast, cheap, reliable.
@@ -232,6 +248,10 @@ Everything runs locally on your machine using your own credentials. The architec
 
 
 ```bash
+# Install from npm (once published)
+npx archer-wizard@latest
+
+# Or from source:
 git clone https://github.com/amirlan-labs/archer-mcp
 cd archer-mcp
 npm install
