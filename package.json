@@ -1,6 +1,6 @@
 {
   "name": "archer-wizard",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "event intelligence layer for AI agents",
   "keywords": [
     "mcp",
@@ -27,7 +27,6 @@
     "url": "https://github.com/amirlan-labs/archer-mcp"
   },
   "homepage": "https://github.com/amirlan-labs/archer-mcp#readme",
-
   "type": "module",
   "bin": {
     "archer": "dist/index.js",
