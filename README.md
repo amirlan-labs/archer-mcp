@@ -171,6 +171,7 @@ Archer auto-detects and injects into all of these:
 | Claude Code | ✓ supported |
 | opencode | ✓ supported |
 | Windsurf | ✓ supported |
+| Antigravity | ✓ supported |
 
 ---
 
@@ -240,6 +241,8 @@ agent calls archer_watch   your agent wakes up with full context
 ```
 
 No AI at runtime. Once a watch is defined it is pure logic — fast, cheap, reliable.
+
+For a deep dive into how Archer is built internally — daemon IPC, state persistence, MCP tools, and the wizard pipeline — see [ARCHITECTURE.md](./ARCHITECTURE.md).
 
 ---
 
