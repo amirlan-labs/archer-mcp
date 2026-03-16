@@ -1,7 +1,33 @@
 {
   "name": "archer-wizard",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "event intelligence layer for AI agents",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai-agent",
+    "agent",
+    "supabase",
+    "realtime",
+    "database-events",
+    "webhook",
+    "cursor",
+    "claude",
+    "windsurf",
+    "opencode",
+    "wizard",
+    "event-intelligence",
+    "data-monitoring",
+    "automation",
+    "postgres",
+    "database-trigger"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amirlan-labs/archer-mcp"
+  },
+  "homepage": "https://github.com/amirlan-labs/archer-mcp#readme",
+
   "type": "module",
   "bin": {
     "archer": "dist/index.js",
