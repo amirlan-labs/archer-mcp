@@ -11,120 +11,99 @@
 
 **event intelligence layer for AI agents**
 
+[![npm version](https://img.shields.io/npm/v/archer-wizard.svg)](https://www.npmjs.com/package/archer-wizard)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 </div>
 
 ---
 
-## what is Archer
-
-Every AI agent today is reactive. Cursor, Claude Code, opencode — they sit completely idle until you manually talk to them. Nobody built the layer that lets them feel what's happening in real time and act on their own.
-
-Archer is that layer.
-
-You tell your agent what to watch. Archer monitors your data sources 24/7. The moment something changes — your agent fires, already loaded with full context. No prompting. No polling. No manual triggers.
-
----
-
-## install
-
-```bash
-npx archer-wizard@latest
-```
-
-Run this inside any project folder. Archer handles everything else automatically.
-
----
-
-## how it works
-
-```
-your data source  ──→  Archer watches 24/7  ──→  event detected  ──→  agent fires
-```
-
-1. **scans** your project for data source credentials automatically
-2. **detects** which AI agents you have installed on your machine
-3. **injects** itself into all their configs — one confirmation, no manual JSON
-4. **teaches** every agent when to call `archer_watch` automatically via rules
-5. your agent now has a nervous system — it feels the world and acts on its own
+Every AI agent today is reactive. It sits idle until you talk to it. Archer gives your agent a nervous system — it watches your database 24/7, and fires the moment something changes.
 
 ---
 
 ## quickstart
 
 ```bash
-# 1. run inside your project
 npx archer-wizard@latest
+```
 
-# 2. Archer scans your .env, finds your credentials, injects into your agents
+Run this inside any project folder. Archer scans for credentials, detects your agents, and injects itself — one command, no manual config.
 
-# 3. open your AI agent and say:
-"watch my users table for new inserts and fire https://your-webhook-url"
+---
 
-# 4. insert a row in your database
+## installation
 
-# 5. your webhook fires with full event context
+### one-liner (recommended)
+
+```bash
+npx archer-wizard@latest
+```
+
+Archer will:
+1. Scan your `.env` files for Supabase credentials
+2. Detect which AI agents are installed on your machine
+3. Inject itself into all their MCP configs automatically
+4. Teach every agent when to call `archer_watch` via rules
+
+### with explicit credentials
+
+```bash
+SUPABASE_URL=https://xyz.supabase.co \
+SUPABASE_SERVICE_ROLE_KEY=your-key \
+npx archer-wizard@latest
 ```
 
 ---
 
 ## MCP tools
 
-Once Archer is set up, your AI agent has access to these tools natively. You never call them directly — your agent calls them when you describe what you want.
+Once set up, your agent has these tools available natively. You describe what you want in plain English — the agent calls them.
+
+```bash
+# Tell your agent:
+"watch the users table and fire https://your-webhook.com on new inserts"
+"monitor orders where status equals shipped"
+"show all active watches"
+"stop watching the payments table"
+```
 
 ### `archer_watch`
 
-Create a persistent real-time watch on a table. Watches survive agent session restarts.
-
 ```typescript
 archer_watch({
-  table: string,        // table or resource to watch (required)
-  event?: string,       // INSERT | UPDATE | DELETE | * (default: *)
-  filter?: string,      // e.g. "status=eq.active", "amount=gt.1000"
-  webhookUrl?: string   // URL to receive POST when event fires
+  table: string,       // table to watch (required)
+  event?: string,      // INSERT | UPDATE | DELETE | * (default: *)
+  filter?: string,     // e.g. "status=eq.active", "amount=gt.1000"
+  webhookUrl: string   // URL to POST when the event fires
 })
 ```
 
 ### `archer_unwatch`
 
-Remove an active watch by its ID.
-
 ```typescript
 archer_unwatch({
-  watchId: string       // the watch ID returned by archer_watch
+  watchId: string      // ID returned by archer_watch
 })
 ```
 
 ### `archer_watches`
 
-List all active watches — their IDs, tables, events, filters, and webhook URLs.
-
 ```typescript
-archer_watches()
+archer_watches()       // list all active watches with status
 ```
 
 ---
 
-## talk to your agent
+## supported agents
 
-```
-"watch my users table and fire https://your-webhook.com when a new row is inserted"
-```
-
-```
-"monitor the orders table for updates where status equals shipped"
-```
-
-```
-"alert me at https://your-webhook.com every time a row is deleted from sessions"
-```
-
-```
-"show me all active watches"
-```
-
-```
-"stop watching the payments table"
-```
+| agent | config location |
+|---|---|
+| Cursor | `~/.cursor/mcp.json` |
+| Claude Code | `~/Library/Application Support/Claude/claude_desktop_config.json` |
+| Windsurf | `~/.codeium/windsurf/mcp_config.json` |
+| OpenCode | `~/.config/opencode/opencode.json` |
+| Antigravity | `~/.config/antigravity/config.json` |
 
 ---
 
@@ -133,67 +112,51 @@ archer_watches()
 | event | description |
 |---|---|
 | `INSERT` | new row inserted into a table |
-| `UPDATE` | existing row updated |
-| `DELETE` | row deleted |
-| `*` | all changes (default) |
+| `UPDATE` | existing row modified |
+| `DELETE` | row removed |
+| `*` | all of the above (default) |
+| `filter` | narrow by any Supabase filter expression |
 
 ---
 
 ## webhook payload
 
-Every time Archer fires, your webhook receives this:
+Every event POSTs this to your webhook URL:
 
 ```json
 {
   "archer": {
-    "watchId": "uuid",
+    "watchId": "550e8400-e29b-41d4-a716-446655440000",
     "event": "INSERT",
     "table": "users",
-    "firedAt": "ISO timestamp"
+    "firedAt": "2025-03-16T09:15:00.000Z"
   },
   "data": {
     "id": "row-id",
     "email": "user@example.com",
-    "created_at": "timestamp"
+    "created_at": "2025-03-16T09:15:00.000Z"
   }
 }
 ```
 
----
+Headers included on every request:
 
-## supported agents
-
-Archer auto-detects and injects into all of these:
-
-| agent | status |
+| header | value |
 |---|---|
-| Cursor | ✓ supported |
-| Claude Code | ✓ supported |
-| opencode | ✓ supported |
-| Windsurf | ✓ supported |
-| Antigravity | ✓ supported |
+| `Content-Type` | `application/json` |
+| `User-Agent` | `Archer/0.2.2` |
+| `X-Archer-Event` | event type (INSERT / UPDATE / DELETE) |
+
+Archer retries failed deliveries 3 times with a 2s delay.
 
 ---
 
-## supported data sources
+## credential discovery
 
-| source | status |
-|---|---|
-| Supabase | ✓ available now |
-| PostgreSQL | coming soon |
-| MySQL | coming soon |
-| GitHub | coming soon |
-| Stripe | coming soon |
-| custom webhooks | coming soon |
-
----
-
-## credentials
-
-Archer scans these files automatically in priority order:
+Archer scans these files automatically, in priority order:
 
 ```
-.env.local
+.env.local         ← checked first
 .env
 .env.development
 .env.production
@@ -201,73 +164,65 @@ Archer scans these files automatically in priority order:
 
 It recognizes common aliases automatically:
 
-```bash
-# standard
-SUPABASE_URL=https://yourproject.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+| credential | aliases checked |
+|---|---|
+| Supabase URL | `SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `VITE_SUPABASE_URL` |
+| Service key | `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_SERVICE_KEY` |
+| Anon key | `SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `VITE_SUPABASE_ANON_KEY` |
 
-# Next.js
-NEXT_PUBLIC_SUPABASE_URL=...
+If no env file is found, Archer scans your codebase for hardcoded values as a fallback.
 
-# Vite
-VITE_SUPABASE_URL=...
+---
+
+## how it works
+
+```
+your agent calls archer_watch
+        ↓
+Archer daemon starts (detached, persists across sessions)
+        ↓
+subscribes to Supabase Realtime channel
+        ↓
+database change detected
+        ↓
+POST to your webhook URL (3 retries)
 ```
 
-You never paste credentials manually. Archer finds them.
+**The daemon runs at `127.0.0.1:44380` and survives MCP server restarts.** Watches are persisted to `~/.archer/state.json` — they resume automatically after machine restarts.
 
 ---
 
 ## requirements
 
 - Node.js 18 or higher
-- at least one supported AI agent installed
-- a `.env` file with your data source credentials
-- realtime enabled on tables you want to watch
+- At least one supported AI agent installed
+- A Supabase project with [Realtime enabled](https://supabase.com/docs/guides/realtime) on the tables you want to watch
+
+---
+
+## supported data sources
+
+| source | status |
+|---|---|
+| Supabase | ✓ available |
+| PostgreSQL (direct) | coming soon |
+| MySQL | coming soon |
+| GitHub events | coming soon |
+| Stripe webhooks | coming soon |
 
 ---
 
 ## architecture
 
-```
-developer's machine                    data source
-───────────────────                    ───────────
-npx archer-wizard@latest               realtime channel
-   ↓                                          ↓
-wizard scans .env          Archer subscribes to changes 24/7
-   ↓                                          ↓
-injects into agents        event detected → webhook fires
-   ↓                                          ↓
-agent calls archer_watch   your agent wakes up with full context
-```
-
-No AI at runtime. Once a watch is defined it is pure logic — fast, cheap, reliable.
-
-For a deep dive into how Archer is built internally — daemon IPC, state persistence, MCP tools, and the wizard pipeline — see [ARCHITECTURE.md](./ARCHITECTURE.md).
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for a full deep dive — daemon IPC protocol, state persistence, MCP tool implementation, and the setup wizard pipeline.
 
 ---
 
-## what v1 does not include
+## no account. no cloud. no dashboard.
 
-- no dashboard
-- no account required
-- no sign in
-- no API key
-- no cloud service
-
-Everything runs locally on your machine using your own credentials. The architecture is universal from day one — the simplicity is intentional.
+Archer runs entirely on your machine using your own credentials. No sign-in, no API keys, no data leaves your infrastructure.
 
 ---
-
-```bash
-# install from npm
-npx archer-wizard@latest
-
-# or from source
-git clone https://github.com/amirlan-labs/archer-mcp
-cd archer-mcp
-npm install
-npm run dev
-```
 
 <div align="center">
 
