@@ -75,7 +75,7 @@ archer_watch({
   table: string,       // table to watch (required)
   event?: string,      // INSERT | UPDATE | DELETE | * (default: *)
   filter?: string,     // e.g. "status=eq.active", "amount=gt.1000"
-  webhookUrl: string   // URL to POST when the event fires
+  webhookUrl?: string  // URL to POST when the event fires (optional)
 })
 ```
 

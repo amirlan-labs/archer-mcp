@@ -11,7 +11,7 @@ graph TB
     subgraph "User's Machine"
         CLI["npx archer-wizard<br/>(wizard mode)"]
         MCP["MCP Server<br/>(--mcp mode)"]
-        Daemon["Daemon Process<br/>(detached, TCP :44380)"]
+        Daemon["Daemon Process<br/>(detached, TCP :7481)"]
         State["~/.archer/state.json"]
         PID["~/.archer/daemon.pid"]
     end
@@ -61,7 +61,7 @@ The daemon is the heart of Archer — a **detached Node.js process** that holds 
 
 ### IPC Protocol — [types.ts](file:///Users/amirlankalmukhan/archer-mcp/src/daemon/types.ts)
 
-Defines JSON-over-TCP protocol on `127.0.0.1:44380`:
+Defines JSON-over-TCP protocol on `127.0.0.1:7481`:
 
 ```typescript
 // Request types (MCP → Daemon)
@@ -96,7 +96,7 @@ The main daemon loop (~190 lines). On startup:
 
 1. Loads persisted state from `state.json`
 2. **Reconnects all saved watches** — for each `WatchConfig`, creates a Supabase client + Realtime channel
-3. Starts TCP server on port `44380`
+3. Starts TCP server on port `7481`
 
 **IPC request handling:**
 
@@ -122,7 +122,7 @@ Used by MCP tools to talk to the daemon:
 Tool → sendIpcRequest() → TCP connect → JSON write → read response → parse
 ```
 
-- `connectToDaemon()` — creates a `net.Socket`, connects to `127.0.0.1:44380`
+- `connectToDaemon()` — creates a `net.Socket`, connects to `127.0.0.1:7481`
 - `sendIpcRequest()` — sends JSON line, reads response, returns parsed `IpcResponse`
 - 5-second timeout on connections
 
@@ -295,7 +295,7 @@ All shared types in one file, Zod-validated where applicable:
 sequenceDiagram
     participant Agent as AI Agent
     participant MCP as MCP Server
-    participant Daemon as Daemon (:44380)
+    participant Daemon as Daemon (:7481)
     participant SB as Supabase
     participant WH as Webhook URL
 
@@ -373,6 +373,6 @@ src/
 
 - ✅ TypeScript build (`npm run build`) — zero errors
 - ✅ All source files compiled to `dist/`
-- ✅ IPC protocol uses JSON-over-TCP on `127.0.0.1:44380`
+- ✅ IPC protocol uses JSON-over-TCP on `127.0.0.1:7481`
 - ✅ State persists to `~/.archer/state.json` with atomic writes
 - ✅ 5 AI agents supported across 3 platforms (macOS/Linux/Windows)
