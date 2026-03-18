@@ -7,18 +7,49 @@ import fs from 'node:fs';
 
 // ─── Simple webhook delivery for daemon context ─────────────
 
-async function deliverWebhook(url: string, payload: unknown): Promise<void> {
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'User-Agent': 'Archer/0.2.0',
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 2000;
+
+async function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function deliverWebhook(url: string, payload: unknown, watchId: string, table: string, eventType: string): Promise<void> {
+  const webhookPayload = {
+    archer: {
+      watchId,
+      event: eventType,
+      table,
+      firedAt: new Date().toISOString(),
     },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) {
-    throw new Error(`webhook ${res.status} ${res.statusText}`);
+    data: payload,
+  };
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'Archer/0.2.0',
+          'X-Archer-Event': eventType,
+        },
+        body: JSON.stringify(webhookPayload),
+      });
+      if (res.ok) {
+        return;
+      }
+      log(`[webhook] attempt ${attempt} failed: ${res.status} ${res.statusText}`);
+    } catch (err) {
+      log(`[webhook] attempt ${attempt} error: ${err instanceof Error ? err.message : String(err)}`);
+    }
+
+    if (attempt < MAX_RETRIES) {
+      log(`[webhook] retrying in ${RETRY_DELAY_MS / 1000}s...`);
+      await sleep(RETRY_DELAY_MS);
+    }
   }
+  throw new Error(`webhook failed after ${MAX_RETRIES} attempts`);
 }
 
 // ─── Active Channel Registry ────────────────────────────────
@@ -49,7 +80,13 @@ function subscribe(watch: WatchConfig): void {
 
         if (watch.webhookUrl) {
           try {
-            await deliverWebhook(watch.webhookUrl, payload);
+            await deliverWebhook(
+              watch.webhookUrl,
+              payload.new ?? payload.old ?? payload,
+              watch.id,
+              watch.table,
+              payload.eventType
+            );
             log(`[webhook] delivered to ${watch.webhookUrl}`);
           } catch (err) {
             log(`[webhook] failed: ${err instanceof Error ? err.message : String(err)}`);
